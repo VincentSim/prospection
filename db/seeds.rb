@@ -14,14 +14,16 @@ class RemoveNoEmail
   end
 
   def parse_csv
-    csv_text = Rails.root.join('db', 'result.csv')
+    csv_text = Rails.root.join('db', 'base.csv')
     csv_options = { col_sep: ',', quote_char: '"', headers: :first_row }
     input  = csv_text
 
     CSV.foreach(input, csv_options) do |row|
-      first_name = row["name"].split(' ')[0]
-      name = (row["name"].split(' ') - [row["name"].split(' ')[0]]).join(" ")
-      User.create!(first_name:first_name, name:name, email:row['email'])
+      if row["email"]
+        first_name = row["name"].split(' ')[0]
+        name = (row["name"].split(' ') - [row["name"].split(' ')[0]]).join(" ")
+        User.create!(first_name:first_name, name:name, email:row['email'], address: row['address'])
+      end
     end
   end
 end
